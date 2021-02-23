@@ -14,7 +14,9 @@ public struct FunctionBodyLengthRule: ASTRule, ConfigurationProviderRule {
 
     public func validate(file: SwiftLintFile, kind: SwiftDeclarationKind,
                          dictionary: SourceKittenDictionary) -> [StyleViolation] {
-        guard let input = RuleInput(file: file, kind: kind, dictionary: dictionary) else {
+        guard let input = RuleInput(file: file, kind: kind, dictionary: dictionary),
+              let name = dictionary.name
+        else {
             return []
         }
 
@@ -28,7 +30,8 @@ public struct FunctionBodyLengthRule: ASTRule, ConfigurationProviderRule {
                     ruleDescription: Self.description, severity: parameter.severity,
                     location: Location(file: file, byteOffset: input.offset),
                     reason: """
-                        Function body should span \(configuration.warning) lines or less excluding comments and \
+                        Function '\(name)' body should span \(configuration.warning) lines or less \
+                        excluding comments and \
                         whitespace: currently spans \(lineCount) lines
                         """
                 )

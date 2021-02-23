@@ -74,7 +74,9 @@ public struct CyclomaticComplexityRule: ASTRule, ConfigurationProviderRule {
 
     public func validate(file: SwiftLintFile, kind: SwiftDeclarationKind,
                          dictionary: SourceKittenDictionary) -> [StyleViolation] {
-        guard SwiftDeclarationKind.functionKinds.contains(kind) else {
+        guard SwiftDeclarationKind.functionKinds.contains(kind),
+              let name = dictionary.name
+        else {
             return []
         }
 
@@ -82,7 +84,7 @@ public struct CyclomaticComplexityRule: ASTRule, ConfigurationProviderRule {
 
         for parameter in configuration.params where complexity > parameter.value {
             let offset = dictionary.offset ?? 0
-            let reason = "Function should have complexity \(configuration.length.warning) or less: " +
+            let reason = "Function '\(name)' should have complexity \(configuration.length.warning) or less: " +
                          "currently complexity equals \(complexity)"
             return [StyleViolation(ruleDescription: Self.description,
                                    severity: parameter.severity,
